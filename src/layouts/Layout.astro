@@ -91,7 +91,7 @@ const fontPreloads = getFontPreloads([
     <meta name="twitter:label2" content="Filed under" />
     <meta property="article:tag" content="Webcomic" />
   </head>
-  <body>
+  <body class={comicProps ? 'page-comic' : undefined}>
     <a href="#content" class="tint--tinted skip-link">Skip to content</a>
     <Header />
     <main id="content">
