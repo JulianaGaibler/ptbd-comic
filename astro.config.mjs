@@ -23,7 +23,7 @@ export default defineConfig({
       preprocessorOptions: {
         sass: {
           additionalData: (d) => {
-            const prepend = `@use "src/styles/utils.sass" as tint\n`
+            const prepend = `@use "@src/styles/utils.sass" as tint\n`
             const match = d.match(/^\s*/)
             const spaces = match ? match[0] : ''
             return `${spaces}${prepend}\n${d}`
