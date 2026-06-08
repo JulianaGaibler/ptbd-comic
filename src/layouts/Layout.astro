@@ -36,8 +36,7 @@ const metaDescription =
   comicProps?.description?.trim() ||
   'A slice-of-life webcomic...maybe?'
 
-const bannerAlt =
-  comicProps?.alt?.[0] || comicProps?.title || metaDescription
+const bannerAlt = comicProps?.alt?.[0] || comicProps?.title || metaDescription
 
 const metaPath =
   Astro.props.fullPath ||
