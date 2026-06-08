@@ -1,4 +1,5 @@
 import svelte from '@astrojs/svelte'
+import sitemap from '@astrojs/sitemap'
 import { defineConfig } from 'astro/config'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { FULLDOMAIN } from './src/constants'
@@ -48,5 +49,5 @@ export default defineConfig({
       }),
     ],
   },
-  integrations: [svelte()],
+  integrations: [svelte(), sitemap()],
 })

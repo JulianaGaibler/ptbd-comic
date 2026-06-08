@@ -60,7 +60,7 @@ const additionalPanels =
   >
     <Fragment set:html={iconArrowLeft} />
   </ComicButton>
-  <ShareButton client:idle comicId={comicId} />
+  <ShareButton client:idle comicId={comicId} title={title} />
   <ComicButton
     icon
     aria-label="Next comic"

@@ -14,12 +14,30 @@ interface Props {
 
 const { title, comicProps } = Astro.props
 
+const DEFAULT_BANNER_WIDTH = 1200
+const DEFAULT_BANNER_HEIGHT = 630
+const SITE_NAME = 'Pretends to be Drawing'
+const AUTHOR_NAME = 'Juliana Gaibler'
+const AUTHOR_URL = 'https://juliana.me'
+
 const banner = comicProps
   ? `${FULLDOMAIN}${comicProps.thumbnailFile.src}`
   : `${FULLDOMAIN}/default-banner.png`
 
+const bannerWidth = comicProps
+  ? comicProps.thumbnailFile.width
+  : DEFAULT_BANNER_WIDTH
+const bannerHeight = comicProps
+  ? comicProps.thumbnailFile.height
+  : DEFAULT_BANNER_HEIGHT
+
 const metaDescription =
-  Astro.props.description || comicProps?.description || 'A webcomic... I guess?'
+  Astro.props.description?.trim() ||
+  comicProps?.description?.trim() ||
+  'A slice-of-life webcomic...maybe?'
+
+const bannerAlt =
+  comicProps?.alt?.[0] || comicProps?.title || metaDescription
 
 const metaPath =
   Astro.props.fullPath ||
@@ -27,7 +45,47 @@ const metaPath =
 
 const aTitle = title || comicProps?.title || undefined
 
-const metaTitle = `${aTitle ? `${aTitle} | ` : ''}Pretends to be Drawing`
+const metaTitle = `${aTitle ? `${aTitle} | ` : ''}${SITE_NAME}`
+
+const ogType = comicProps ? 'article' : 'website'
+
+const jsonLd = comicProps
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'ComicStory',
+      name: comicProps.title,
+      headline: comicProps.title,
+      description: metaDescription,
+      image: banner,
+      url: metaPath,
+      datePublished: comicProps.date.toISOString(),
+      dateModified: comicProps.date.toISOString(),
+      inLanguage: 'en',
+      author: {
+        '@type': 'Person',
+        name: AUTHOR_NAME,
+        url: AUTHOR_URL,
+      },
+      license: 'http://creativecommons.org/licenses/by-nc-sa/4.0/',
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: FULLDOMAIN,
+      },
+    }
+  : {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE_NAME,
+      url: FULLDOMAIN,
+      description: metaDescription,
+      inLanguage: 'en',
+      author: {
+        '@type': 'Person',
+        name: AUTHOR_NAME,
+        url: AUTHOR_URL,
+      },
+    }
 
 // Preload fonts used in the design
 const fontPreloads = getFontPreloads([
@@ -44,22 +102,61 @@ const fontPreloads = getFontPreloads([
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {fontPreloads.map((props) => <link {...props} />)}
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/apple-touch-icon-dark.png"
+      media="(prefers-color-scheme: dark)"
+    />
     <link rel="manifest" href="/site.webmanifest" />
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#ff543c" />
 
-    <meta name="theme-color" content="#db503e" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ff543c"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#231f20"
+    />
     <meta name="apple-mobile-web-app-title" content="Pretends to be Drawing" />
     <meta name="application-name" content="Pretends to be Drawing" />
-    <meta name="msapplication-TileColor" content="#da532c" />
 
     <title>{metaTitle}</title>
     {metaDescription && <meta name="description" content={metaDescription} />}
+    <meta name="author" content={AUTHOR_NAME} />
+    {metaPath && <link rel="canonical" href={metaPath} />}
+
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="Pretends to be Drawing — Atom"
+      href="/feed"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Pretends to be Drawing — RSS"
+      href="/feed/rss"
+    />
+    <link
+      rel="alternate"
+      type="application/feed+json"
+      title="Pretends to be Drawing — JSON Feed"
+      href="/feed/json"
+    />
 
     <meta name="twitter:image" content={banner} />
+    <meta name="twitter:image:alt" content={bannerAlt} />
     <meta property="og:image" content={banner} />
+    <meta property="og:image:width" content={String(bannerWidth)} />
+    <meta property="og:image:height" content={String(bannerHeight)} />
+    <meta property="og:image:alt" content={bannerAlt} />
     {
       comicProps && (
         <meta
@@ -76,10 +173,12 @@ const fontPreloads = getFontPreloads([
         />
       )
     }
+    {comicProps && <meta property="article:author" content={AUTHOR_URL} />}
     <meta property="og:site_name" content="Pretends to be Drawing" />
     <meta property="og:title" content={comicProps?.title || metaTitle} />
     <meta property="og:description" content={metaDescription} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="en_US" />
     {metaPath && <meta property="og:url" content={metaPath} />}
     <meta name="twitter:title" content={comicProps?.title || metaTitle} />
     <meta name="twitter:description" content={metaDescription} />
@@ -90,6 +189,12 @@ const fontPreloads = getFontPreloads([
     <meta name="twitter:creator" content="@JulianGaibler" />
     <meta name="twitter:label2" content="Filed under" />
     <meta property="article:tag" content="Webcomic" />
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(jsonLd)}
+    />
   </head>
   <body class={comicProps ? 'page-comic' : undefined}>
     <a href="#content" class="skip-link">Skip to content</a>

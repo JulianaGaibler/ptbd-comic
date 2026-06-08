@@ -10,9 +10,10 @@
 
   interface Props {
     comicId: string
+    title: string
   }
 
-  let { comicId }: Props = $props()
+  let { comicId, title }: Props = $props()
 
   let modalOpen = $state(false)
   let copied = $state(false)
@@ -44,7 +45,10 @@
 
   onMount(() => {
     shareLink = `${window.location.origin}/comic/${comicId}`
-    const link = encodeURI(shareLink)
+    const link = encodeURIComponent(shareLink)
+    const text = encodeURIComponent(title)
+    const textAndLink = encodeURIComponent(`${title} ${shareLink}`)
+    const subject = encodeURIComponent(`${title} — Pretends to be Drawing`)
     socialLinks = [
       {
         name: 'Download',
@@ -52,20 +56,28 @@
         link: `/share/${comicId}.png`,
       },
       {
+        name: 'Bluesky',
+        link: `https://bsky.app/intent/compose?text=${textAndLink}`,
+      },
+      {
+        name: 'Mastodon',
+        link: `https://share.planetary.pub/?text=${textAndLink}`,
+      },
+      {
         name: 'Twitter / "X"',
-        link: `https://twitter.com/share?hashtags=ptbd&url=${link}`,
+        link: `https://twitter.com/share?hashtags=ptbd&text=${text}&url=${link}`,
       },
       {
         name: 'WhatsApp',
-        link: `https://wa.me/?text=${link}`,
+        link: `https://wa.me/?text=${textAndLink}`,
       },
       {
         name: 'Telegram',
-        link: `https://t.me/share/url?url=${link}`,
+        link: `https://t.me/share/url?url=${link}&text=${text}`,
       },
       {
         name: 'Reddit',
-        link: `https://www.reddit.com/submit?url=${link}`,
+        link: `https://www.reddit.com/submit?url=${link}&title=${text}`,
       },
       {
         name: 'Facebook',
@@ -73,11 +85,11 @@
       },
       {
         name: 'Tumblr',
-        link: `https://www.tumblr.com/widgets/share/tool?tags=ptbd&canonicalUrl=${link}`,
+        link: `https://www.tumblr.com/widgets/share/tool?tags=ptbd&canonicalUrl=${link}&title=${text}`,
       },
       {
         name: 'Mail',
-        link: `mailto:?to=&body=${link}`,
+        link: `mailto:?subject=${subject}&body=${textAndLink}`,
       },
     ]
   })

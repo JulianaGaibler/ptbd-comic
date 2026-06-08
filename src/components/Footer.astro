@@ -1,12 +1,60 @@
 ---
 import logo from '@src/assets/g-logo.svg?raw'
+import iconInstagram from '@src/assets/socials/instagram.svg?raw'
+import iconFacebook from '@src/assets/socials/facebook.svg?raw'
+import iconMastodon from '@src/assets/socials/mastodon.svg?raw'
+import iconBluesky from '@src/assets/socials/bluesky.svg?raw'
 const currentYear = new Date().getFullYear()
 ---
 
 <footer>
-  <a class="g" href="//juliana.me" aria-label="Juliana Gaibler Website">
-    <span aria-hidden="true"><Fragment set:html={logo} /></span>
-  </a>
+  <ul class="socials" aria-label="Social media">
+    <li>
+      <a href="//juliana.me" aria-label="Juliana Gaibler Website">
+        <Fragment set:html={logo} />
+      </a>
+    </li>
+    <li>
+      <a
+        href="https://instagram.com/pretendstobedrawing/"
+        rel="noopener"
+        target="_blank"
+        aria-label="Pretends to be Drawing on Instagram"
+      >
+        <Fragment set:html={iconInstagram} />
+      </a>
+    </li>
+    <li>
+      <a
+        href="https://facebook.com/pretendstobedrawing/"
+        rel="noopener"
+        target="_blank"
+        aria-label="Pretends to be Drawing on Facebook"
+      >
+        <Fragment set:html={iconFacebook} />
+      </a>
+    </li>
+    <li>
+      <a
+        href="https://mastodon.social/@JulianaGaibler"
+        rel="me noopener"
+        target="_blank"
+        aria-label="Juliana Gaibler on Mastodon"
+      >
+        <Fragment set:html={iconMastodon} />
+      </a>
+    </li>
+    <li>
+      <a
+        href="https://bsky.app/profile/juliana.me"
+        rel="me noopener"
+        target="_blank"
+        aria-label="Juliana Gaibler on Bluesky"
+      >
+        <Fragment set:html={iconBluesky} />
+      </a>
+    </li>
+  </ul>
   <span
     >© 2016-{currentYear} Juliana Gaibler · <a
       lang="de"
@@ -29,11 +77,30 @@ const currentYear = new Date().getFullYear()
     --mask: linear-gradient(180deg,#0000 16px,#000 0), radial-gradient(16px,#000 calc(100% - 1px),#0000) top/29.6px 32px
     -webkit-mask: var(--mask)
     mask: var(--mask)
-    .g
-      display: inline
-      padding: tint.$size-8
     a:hover, a:focus
       color: var(--tint-text-link)
-    span > :global(svg)
+
+  .socials
+    list-style: none
+    display: flex
+    gap: tint.$size-4
+    padding: 0
+    margin: 0 0 tint.$size-8
+    li
+      display: flex
+    a
+      @include tint.effect-focus
+      display: flex
+      align-items: center
+      justify-content: center
+      width: tint.$size-40
+      height: tint.$size-40
+      border-radius: 9999px
+      color: var(--tint-text-secondary)
+      text-decoration: none
+      &:hover, &:focus
+        color: var(--tint-text-link)
+        background: var(--tint--card-bg-hover)
+    :global(svg)
+      width: auto
       height: tint.$size-24
-</style>
