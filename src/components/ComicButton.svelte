@@ -140,6 +140,7 @@
     margin-block-end: 6px
     flex-shrink: 0
     min-height: 56px
+    -webkit-tap-highlight-color: transparent
     @-moz-document url-prefix()
       // This attempts to cover up a rendering bug in Firefox
       outline: 2px solid currentColor

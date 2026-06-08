@@ -279,15 +279,6 @@ const navLinks: NavLink[] = [
     .menu-trigger
       display: none
       anchor-name: --menu-anchor
-      @media (prefers-color-scheme: dark)
-        &::before
-          content: ''
-          position: absolute
-          display: block
-          inset: -20px 0
-          background: var(--tint-bg)
-          border-radius: 9999px
-          filter: blur(24px)
     @media (max-width: 850px)
       .nav-label-secondary
         display: none
@@ -343,4 +334,15 @@ const navLinks: NavLink[] = [
     @media (max-width: 640px)
       .nav-popover-primary
         display: list-item
+
+  @media (prefers-color-scheme: dark)
+    ul::before
+      content: ''
+      position: absolute
+      display: block
+      inset: -20px 0
+      background: var(--tint-bg)
+      border-radius: 9999px
+      filter: blur(24px)
+      pointer-events: none
 </style>
