@@ -1,5 +1,5 @@
 ---
-import { Button } from 'tint/components/index'
+import ComicButton from '@src/components/ComicButton.svelte'
 import iconArrowLeft from 'tint/icons/20-arrow-left.svg?raw'
 import iconArrowRight from 'tint/icons/20-arrow-right.svg?raw'
 import { comicDateFormatter } from '@src/comic-data'
@@ -11,28 +11,26 @@ const { year, humanEraYear, items, nextYear, prevYear } = Astro.props
 ---
 
 <div class="header">
-  <Button
-    icon={true}
+  <ComicButton
+    icon
     disabled={prevYear === undefined}
     href={`/archive/${prevYear}`}
     aria-label={`Previous year: ${prevYear}`}
   >
     <Fragment set:html={iconArrowLeft} />
-  </Button>
+  </ComicButton>
   <h1>
-    <span class="tint--type-body-serif">Human Era</span>
-    <time class="tint--type-body-serif-small" datetime={year}
-      >{humanEraYear}</time
-    >
+    <span class="tint--type-body-sans">Human Era</span>
+    <time class="tint--type-title-sans-2" datetime={year}>{humanEraYear}</time>
   </h1>
-  <Button
-    icon={true}
+  <ComicButton
+    icon
     disabled={nextYear === undefined}
     href={`/archive/${nextYear}`}
     aria-label={`Next year: ${nextYear}`}
   >
     <Fragment set:html={iconArrowRight} />
-  </Button>
+  </ComicButton>
 </div>
 
 <ul>
@@ -44,7 +42,7 @@ const { year, humanEraYear, items, nextYear, prevYear } = Astro.props
             <OptimizedImg src={item.thumbnailFile} />
           </div>
           <div class="info">
-            <h2 class="tint--type-body-serif-bold">{item.title}</h2>
+            <h2 class="tint--type-body-sans">{item.title}</h2>
             <time datetime={item.date.toISOString()}>
               {comicDateFormatter.format(item.date)}
             </time>
@@ -56,23 +54,25 @@ const { year, humanEraYear, items, nextYear, prevYear } = Astro.props
 </ul>
 
 <div class="footer">
-  <Button
-    icon={true}
+  <ComicButton
+    icon
     disabled={prevYear === undefined}
     href={`/archive/${prevYear}`}
     aria-label={`Previous year: ${prevYear}`}
   >
     <Fragment set:html={iconArrowLeft} />
-  </Button>
-  <p>{items.length} comic{items.length === 1 ? '' : 's'}</p>
-  <Button
-    icon={true}
+  </ComicButton>
+  <p class="tint--type-body-sans">
+    {items.length} comic{items.length === 1 ? '' : 's'}
+  </p>
+  <ComicButton
+    icon
     disabled={nextYear === undefined}
     href={`/archive/${nextYear}`}
     aria-label={`Next year: ${nextYear}`}
   >
     <Fragment set:html={iconArrowRight} />
-  </Button>
+  </ComicButton>
 </div>
 
 <style lang="sass">
@@ -92,7 +92,9 @@ const { year, humanEraYear, items, nextYear, prevYear } = Astro.props
       margin-bottom: tint.$size-16
     a
       text-decoration: none
-      &:hover, &:focus
+      &:hover
+        color: var(--tint-text-link)
+      &:focus
         outline: none
         color: var(--tint-text-link)
         .thumb

@@ -1,74 +1,348 @@
 ---
 import logo from '@src/assets/ptbd-logo.svg?raw'
+import ComicButton from './ComicButton.svelte'
+import iconArrowLeft from 'tint/icons/20-arrow-left.svg?raw'
+import iconArrowRight from 'tint/icons/20-arrow-right.svg?raw'
+import iconMenu from 'tint/icons/20-menu.svg?raw'
+import iconClose from 'tint/icons/20-close.svg?raw'
+import lightLeft from '@src/assets/header/light_left.svg'
+import darkLeft from '@src/assets/header/dark_left.svg'
+import lightRight from '@src/assets/header/light_right.svg'
+import darkRight from '@src/assets/header/dark_right.svg'
+import lightBg from '@src/assets/header/light_bg.svg?url'
+import darkBg from '@src/assets/header/dark_bg.svg?url'
+import type { ComicProps } from '@src/comic-data'
+
+interface Props {
+  comicProps?: ComicProps
+}
+
+const { comicProps } = Astro.props
+
+const leftAspect = lightLeft.width / lightLeft.height
+const rightAspect = lightRight.width / lightRight.height
 
 const currentPath = Astro.url.pathname
 const isCurrent = (href: string) => {
-  const normalized = currentPath.endsWith('/') ? currentPath.slice(0, -1) : currentPath
+  const normalized = currentPath.endsWith('/')
+    ? currentPath.slice(0, -1)
+    : currentPath
   const hrefNormalized = href.endsWith('/') ? href.slice(0, -1) : href
   return normalized === hrefNormalized ? 'page' : undefined
 }
+
+interface NavLink {
+  href: string
+  label: string
+  tilt: string
+  current?: 'page'
+  external?: boolean
+  primary?: boolean
+}
+
+const navLinks: NavLink[] = [
+  {
+    href: '/about',
+    label: 'About',
+    tilt: 'tilt-about',
+    current: isCurrent('/about'),
+    primary: true,
+  },
+  {
+    href: '/archive',
+    label: 'Archive',
+    tilt: 'tilt-archive',
+    current: isCurrent('/archive'),
+    primary: true,
+  },
+  {
+    href: '//instagram.com/pretendstobedrawing/',
+    label: 'Instagram',
+    tilt: 'tilt-instagram',
+    external: true,
+  },
+  {
+    href: '//facebook.com/pretendstobedrawing/',
+    label: 'Facebook',
+    tilt: 'tilt-facebook',
+    external: true,
+  },
+  {
+    href: '/feed',
+    label: 'RSS',
+    tilt: 'tilt-rss',
+    external: true,
+  },
+]
 ---
 
-<header class="tint--tinted">
-  <a class="logo" href="/" aria-label="Pretends to be Drawing" aria-current={isCurrent('/')}
-    ><Fragment set:html={logo} /></a
-  >
-  <nav>
-    <ul class="tint--type-body-sans">
-      <li class="tint--type-body-sans-bold">
-        <a href="/about" class="" aria-current={isCurrent('/about')}>About</a>
-      </li>
-      <li class="tint--type-body-sans-bold">
-        <a href="/archive" class="" aria-current={isCurrent('/archive')}>Archive</a>
-      </li>
-      <li>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="//facebook.com/pretendstobedrawing/">Facebook</a
-        >
-      </li>
-      <li>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="//instagram.com/pretendstobedrawing/">Instagram</a
-        >
-      </li>
-      <li>
-        <a target="_blank" rel="noopener noreferrer" href="/feed">RSS</a>
-      </li>
-    </ul>
-  </nav>
+<header
+  style={`--left-aspect: ${leftAspect}; --right-aspect: ${rightAspect}; --bg-pattern-light: url('${lightBg}'); --bg-pattern-dark: url('${darkBg}');`}
+>
+  <div class="bg-side bg-side-left">
+    <picture>
+      <source srcset={darkLeft.src} media="(prefers-color-scheme: dark)" />
+      <img src={lightLeft.src} alt="" aria-hidden="true" />
+    </picture>
+  </div>
+  <div class="dead-zone">
+    <a
+      class="logo"
+      href="/"
+      aria-label="Pretends to be Drawing"
+      aria-current={isCurrent('/')}><Fragment set:html={logo} /></a
+    >
+  </div>
+  <div class="bg-side bg-side-right">
+    <picture>
+      <source srcset={darkRight.src} media="(prefers-color-scheme: dark)" />
+      <img src={lightRight.src} alt="" aria-hidden="true" />
+    </picture>
+  </div>
 </header>
+<nav>
+  <ul class="nav-inline">
+    {
+      comicProps && (
+        <li class="tilt-prev-arrow">
+          <ComicButton
+            icon
+            aria-label="Previous comic"
+            disabled={comicProps.prevComic === undefined}
+            href={`/comic/${comicProps.prevComic}`}
+          >
+            <Fragment set:html={iconArrowLeft} />
+          </ComicButton>
+        </li>
+      )
+    }
+    {
+      navLinks.map((link) => (
+        <li
+          class={`nav-label ${link.primary ? 'nav-label-primary' : 'nav-label-secondary'} ${link.tilt}`}
+        >
+          <ComicButton
+            href={link.href}
+            external={link.external}
+            aria-current={link.current}
+          >
+            {link.label}
+          </ComicButton>
+        </li>
+      ))
+    }
+    <li class="menu-trigger tilt-menu">
+      <ComicButton icon aria-label="Menu" popovertarget="nav-menu">
+        <Fragment set:html={iconMenu} />
+      </ComicButton>
+    </li>
+    {
+      comicProps && (
+        <li class="tilt-next-arrow">
+          <ComicButton
+            icon
+            aria-label="Next comic"
+            disabled={comicProps.nextComic === undefined}
+            href={`/comic/${comicProps.nextComic}`}
+          >
+            <Fragment set:html={iconArrowRight} />
+          </ComicButton>
+        </li>
+      )
+    }
+  </ul>
+
+  <ul id="nav-menu" popover class="nav-popover">
+    <li class="nav-popover-close">
+      <ComicButton
+        icon
+        aria-label="Close menu"
+        popovertarget="nav-menu"
+        popovertargetaction="hide"
+      >
+        <Fragment set:html={iconClose} />
+      </ComicButton>
+    </li>
+    {
+      navLinks.map((link) => (
+        <li class={link.primary ? 'nav-popover-primary' : ''}>
+          <ComicButton
+            href={link.href}
+            external={link.external}
+            aria-current={link.current}
+          >
+            {link.label}
+          </ComicButton>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
 
 <style lang="sass">
-  .logo
-    color: var(--tint-text-accent)
   header
+    // --header-height: 265px
+    --header-height: clamp(200px, 30vw, 265px)
+    border-radius: tint.$size-32
+    margin: tint.$size-16
+    margin-block-end: 0
+    height: var(--header-height)
+    box-sizing: border-box
     display: flex
-    flex-direction: column
-    align-items: center
-    padding: tint.$size-32
-    gap: tint.$size-16
+    overflow: hidden
+    background-color: #B1CFD3
+    background-image: var(--bg-pattern-light)
+    background-repeat: repeat-x
+    background-size: auto 100%
+    background-position: center 0
+    @media (prefers-color-scheme: dark)
+      background-color: transparent
+      background-image: var(--bg-pattern-dark), linear-gradient(180deg, #382032 0%, #442536 20%, #5C2E3B 40%, #7A3A42 60%, #9D4649 80%, #C55450 100%)
+      background-repeat: repeat-x, no-repeat
+      background-size: auto 100%, 100% 100%
+      background-position: 0 0, 0 0
+
+  .bg-side
+    flex: 1 1 0
     position: relative
-    &::before
-      content: ''
-      inset: 0
-      bottom: -128px
+    overflow: hidden
+    picture
       position: absolute
-      background: var(--tint-bg)
-      z-index: -1
-  ul
-    list-style: none
+      top: 0
+      height: 100%
+      width: auto
+      display: block
+      pointer-events: none
+    img
+      display: block
+      height: 100%
+      width: auto
+
+  .bg-side-left
+    --left-width: calc(var(--header-height) * var(--left-aspect))
+    picture
+      left: min(0px, calc(100% - var(--left-width)))
+
+  .bg-side-right
+    --right-width: calc(var(--header-height) * var(--right-aspect))
+    picture
+      right: min(0px, calc(100% - var(--right-width)))
+
+  .dead-zone
+    // ratio preserves the original 400 : 265 dead-zone-to-header relationship
+    flex: 0 1 calc(var(--header-height) * 400 / 265)
+    min-width: 0
     display: flex
-    gap: tint.$size-8 tint.$size-16
-    flex-wrap: wrap
     justify-content: center
-    a
-      text-decoration: none
-      &:hover
-        text-decoration: underline
-  a:hover, a:focus
-    color: var(--tint-text-link)
+    align-items: center
+    padding-block-end: tint.$size-16
+    position: relative
+    .logo
+      display: block
+      width: clamp(240px, 40vw, 300px)
+      max-width: 300px
+      margin-inline: 32px
+      :global(svg)
+        color: var(--tint-text)
+        width: 100%
+        height: auto
+
+  nav
+    display: flex
+    justify-content: center
+    height: 48px
+    margin-block-end: tint.$size-16
+    .nav-inline
+      list-style: none
+      display: flex
+      justify-content: center
+      align-items: center
+      gap: tint.$size-8
+      padding: 0 tint.$size-16
+      margin: tint.$size-16
+      margin-block-start: 0
+      translate: 0 -50%
+    .menu-trigger
+      display: none
+      anchor-name: --menu-anchor
+      // visual order: prev, About, menu, Archive, secondary..., next
+      // DOM order stays prev → primary → secondary → menu → next
+      > .tilt-prev-arrow
+        order: 0
+      > .tilt-about
+        order: 1
+      > .menu-trigger
+        order: 2
+      > .tilt-archive
+        order: 3
+      > .nav-label-secondary
+        order: 4
+      > .tilt-next-arrow
+        order: 5
+      @media (prefers-color-scheme: dark)
+        &::before
+          content: ''
+          position: absolute
+          display: block
+          inset: -20px 0
+          background: var(--tint-bg)
+          border-radius: 9999px
+          filter: blur(24px)
+
+  @media (max-width: 850px)
+    nav .nav-label-secondary
+      display: none
+    nav .menu-trigger
+      display: list-item
+  @media (max-width: 520px)
+    nav .nav-label-primary
+      display: none
+
+  .nav-popover
+    &:popover-open
+      display: flex
+      flex-direction: column
+      gap: tint.$size-12
+      margin: 16px
+      margin-block-start: 0
+      padding: tint.$size-16
+      list-style: none
+      background: var(--tint-bg)
+      color: var(--tint-text)
+      border: 4px solid var(--tint-text)
+      border-radius: tint.$size-24
+      box-shadow: 0 6px 0 0 var(--tint-text)
+      // override popover UA default (overflow: auto) so the close button can stick out
+      overflow: visible
+      // Modern: anchor to the menu trigger so the popover drops from it
+      @supports (anchor-name: --x)
+        position-anchor: --menu-anchor
+        position-area: bottom
+      // Fallback for older browsers: viewport-centered near the top
+      @supports not (anchor-name: --x)
+        position: fixed
+        inset: auto
+        top: tint.$size-32
+        left: 50%
+        translate: -50% 0
+    &::backdrop
+      background: rgba(0, 0, 0, 0.15)
+    li
+      list-style: none
+    // close button floats centered on the top-left corner of the popover
+    .nav-popover-close
+      position: absolute
+      top: 0
+      left: 0
+      translate: -50% -50%
+    li:not(.nav-popover-close) :global(.bump-button)
+      width: 100%
+    // hide About/Archive in popover while they're still visible inline (medium)
+    .nav-popover-primary
+      display: none
+
+  // narrow: surface About/Archive in popover too
+  @media (max-width: 640px)
+    .nav-popover .nav-popover-primary
+      display: list-item
 </style>

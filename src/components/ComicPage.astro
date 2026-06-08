@@ -1,5 +1,5 @@
 ---
-import { Button } from 'tint/components/index'
+import ComicButton from '@src/components/ComicButton.svelte'
 import ShareButton from '@src/components/ShareButton.svelte'
 import iconArrowLeft from 'tint/icons/20-arrow-left.svg?raw'
 import iconArrowRight from 'tint/icons/20-arrow-right.svg?raw'
@@ -12,80 +12,73 @@ const { title, date, alt, panelFiles, Content, comicId, nextComic, prevComic } =
 
 const comicNumber = parseInt(comicId)
 const isOldComic = comicNumber <= 41
-const additionalPanels = isOldComic && panelFiles[1] ? [panelFiles[1]] : panelFiles.slice(1)
+const additionalPanels =
+  isOldComic && panelFiles[1] ? [panelFiles[1]] : panelFiles.slice(1)
 ---
-
-<div class="header">
-  <h1 class="tint--type-title-serif-2">{title}</h1>
-  <time datetime={date.toISOString()}>{comicDateFormatter.format(date)}</time>
-</div>
 
 <section class="sections">
   <OptimizedImg
     src={panelFiles[0]}
     alt={alt ? alt[0] : 'Sorry, older comics do not have alt-text.'}
   />
-  {isOldComic && panelFiles[1] ? (
-    <details>
-      <summary>Hidden panel?</summary>
-      <OptimizedImg
-        src={panelFiles[1]}
-        alt={alt ? alt[1] : 'Sorry, older comics do not have alt-text.'}
-      />
-    </details>
-  ) : null}
-  {!isOldComic ? (
-    additionalPanels.map((file, i) => (
-      <OptimizedImg
-        src={file}
-        alt={alt ? alt[i + 1] : 'Sorry, older comics do not have alt-text.'}
-      />
-    ))
-  ) : null}
+  {
+    isOldComic && panelFiles[1] ? (
+      <details>
+        <summary>Hidden panel?</summary>
+        <OptimizedImg
+          src={panelFiles[1]}
+          alt={alt ? alt[1] : 'Sorry, older comics do not have alt-text.'}
+        />
+      </details>
+    ) : null
+  }
+  {
+    !isOldComic
+      ? additionalPanels.map((file, i) => (
+          <OptimizedImg
+            src={file}
+            alt={alt ? alt[i + 1] : 'Sorry, older comics do not have alt-text.'}
+          />
+        ))
+      : null
+  }
 </section>
 
-<div class="footer">
-  <div class="text tint--type-body-serif">
-    <Content />
-  </div>
-  <nav>
-    <Button
-      aria-label="Previous comic"
-      icon={true}
-      disabled={prevComic === undefined}
-      href={`/comic/${prevComic}`}
-    >
-      <Fragment set:html={iconArrowLeft} />
-    </Button>
-    <ShareButton client:idle comicId={comicId} />
-    <Button
-      aria-label="Next comic"
-      icon={true}
-      disabled={nextComic === undefined}
-      href={`/comic/${nextComic}`}
-    >
-      <Fragment set:html={iconArrowRight} />
-    </Button>
-  </nav>
+<div class="title-block">
+  <h1 class="tint--type-title-serif-2">{title}</h1>
+  <time class="tint--type-body-sans-small" datetime={date.toISOString()}>
+    {comicDateFormatter.format(date)}
+  </time>
+</div>
+
+<nav>
+  <ComicButton
+    icon
+    aria-label="Previous comic"
+    disabled={prevComic === undefined}
+    href={`/comic/${prevComic}`}
+  >
+    <Fragment set:html={iconArrowLeft} />
+  </ComicButton>
+  <ShareButton client:idle comicId={comicId} />
+  <ComicButton
+    icon
+    aria-label="Next comic"
+    disabled={nextComic === undefined}
+    href={`/comic/${nextComic}`}
+  >
+    <Fragment set:html={iconArrowRight} />
+  </ComicButton>
+</nav>
+
+<div class="text tint--type-body-serif">
+  <Content />
 </div>
 
 <style lang="sass">
   :global(body.page-comic .content)
-    max-width: min(100vw - 2 * #{tint.$size-16}, 1600px)
-  .header,
-  .footer
-    max-width: 600px
-    margin-inline: auto
-  .header
-    display: flex
-    justify-content: space-between
-    align-items: flex-end
-    margin-block-end: tint.$size-8
-    h1
-      margin: 0
-    time
-      font-size: tint.$size-16
-      color: var(--text-secondary)
+    max-width: clamp(600px, 80vh - 2 * #{tint.$size-16}, 1200px)
+
   .sections
     display: flex
     flex-direction: column
@@ -99,7 +92,6 @@ const additionalPanels = isOldComic && panelFiles[1] ? [panelFiles[1]] : panelFi
       width: auto
       height: auto
       max-width: 100%
-      max-height: clamp(600px, 65vh, 1200px)
       margin: 0 auto
     details
       summary
@@ -117,31 +109,39 @@ const additionalPanels = isOldComic && panelFiles[1] ? [panelFiles[1]] : panelFi
         border-bottom-right-radius: 0
         margin-bottom: 0
 
-  .footer
-    margin-block-start: 12px
-    display: grid
-    grid-template-columns: auto 1fr
-    gap: tint.$size-16
-    grid-template-areas: "nav text"
-    nav
-      grid-area: nav
-      display: flex
-      gap: tint.$size-8
-    .text
-      grid-area: text
-      margin-block-start: 14px
-      :global(.hidden)
-        display: inline-block
-        padding: tint.$size-8
-        margin-block-start: tint.$size-8
-        background: var(--tint-bg)
-        border: 1px solid var(--tint--card-border)
-        border-radius: tint.$size-8
-        opacity: 0
-        transition: opacity 0.2s ease-in-out
-        background: repeating-linear-gradient(45deg,#FFF8F5,#FFF8F5 10px,#FFFDFC 10px, #FFFDFC 20px)
-        @media (prefers-color-scheme: dark)
-          background: repeating-linear-gradient(45deg,#271614,#271614 10px,#1C1312 10px, #1C1312 20px)
-        &:hover, &:focus
-          opacity: 1
+  .title-block
+    text-align: center
+    margin-block-start: tint.$size-24
+    h1
+      margin: 0
+    time
+      display: block
+      color: var(--tint-text-secondary)
+      margin-block-start: tint.$size-4
+
+  nav
+    display: flex
+    justify-content: center
+    align-items: center
+    gap: tint.$size-8
+    margin-block-start: tint.$size-16
+
+  .text
+    max-width: 512px
+    margin: tint.$size-32 auto 0
+    text-align: center
+    :global(.hidden)
+      display: inline-block
+      padding: tint.$size-8
+      margin-block-start: tint.$size-8
+      background: var(--tint-bg)
+      border: 1px solid var(--tint--card-border)
+      border-radius: tint.$size-8
+      opacity: 0
+      transition: opacity 0.2s ease-in-out
+      background: repeating-linear-gradient(45deg,#FFF8F5,#FFF8F5 10px,#FFFDFC 10px, #FFFDFC 20px)
+      @media (prefers-color-scheme: dark)
+        background: repeating-linear-gradient(45deg,#271614,#271614 10px,#1C1312 10px, #1C1312 20px)
+      &:hover, &:focus
+        opacity: 1
 </style>

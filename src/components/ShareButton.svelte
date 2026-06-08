@@ -1,6 +1,7 @@
 <script lang="ts">
   const isClient = typeof window !== 'undefined'
   import { Button } from 'tint/components/index'
+  import ComicButton from './ComicButton.svelte'
   import Modal from 'tint/components/Modal.svelte'
   import iconShare from 'tint/icons/20-link.svg?raw'
   import iconCopy from 'tint/icons/20-copy.svg?raw'
@@ -83,11 +84,11 @@
 </script>
 
 {#if isClient}
-  <Button
+  <ComicButton
     title="Share comic"
-    icon={true}
+    icon
     onclick={openShareDialog}
-    aria-label="Share comic">{@html iconShare}</Button
+    aria-label="Share comic">{@html iconShare}</ComicButton
   >
 
   <Modal bind:open={modalOpen}>
@@ -125,11 +126,8 @@
     </div>
   </Modal>
 {:else}
-  <Button
-    title="Share comic"
-    icon={true}
-    external={true}
-    href={`/share/${comicId}.png`}>{@html iconShare}</Button
+  <ComicButton title="Share comic" icon external href={`/share/${comicId}.png`}
+    >{@html iconShare}</ComicButton
   >
 {/if}
 

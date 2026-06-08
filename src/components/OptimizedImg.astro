@@ -9,20 +9,69 @@ type Props = {
 
 const { src, alt, className } = Astro.props
 
-const skipOptimization = import.meta.env.PUBLIC_SKIP_IMAGE_OPTIMIZATION === 'true'
-const optimizedAvif = skipOptimization ? null : await getImage({ src, format: 'avif', quality: 90 })
+const skipOptimization =
+  import.meta.env.PUBLIC_SKIP_IMAGE_OPTIMIZATION === 'true'
+const optimizedAvif = skipOptimization
+  ? null
+  : await getImage({ src, format: 'avif', quality: 90 })
+
+// Shimmer angle = picture's true top-left → bottom-right diagonal, expressed in
+// CSS gradient degrees (0° points up, clockwise). atan2 returns the angle from
+// the +X axis in math coordinates, +90° converts it to the CSS convention.
+const shimmerAngle = (Math.atan2(src.height, src.width) * 180) / Math.PI + 90
 ---
 
-<picture class={className}>
-  {optimizedAvif && <Fragment><source srcset={optimizedAvif.src} type="image/avif" /></Fragment>}
-  <img src={src.src} alt={alt} />
+<picture
+  class={className}
+  style={`width: ${src.width}px; max-width: 100%; aspect-ratio: ${src.width} / ${src.height}; --shimmer-angle: ${shimmerAngle}deg`}
+>
+  {
+    optimizedAvif && (
+      <Fragment>
+        <source srcset={optimizedAvif.src} type="image/avif" />
+      </Fragment>
+    )
+  }
+  <img
+    src={src.src}
+    alt={alt}
+    width={src.width}
+    height={src.height}
+    decoding="async"
+  />
 </picture>
 
 <style lang="sass">
   picture
     display: block
     overflow: hidden
+    position: relative
+    background-color: var(--tint-input-bg)
+    &::before
+      content: ''
+      position: absolute
+      top: 0
+      left: 0
+      width: 400%
+      height: 400%
+      transform: translate(-75%, -75%)
+      background: linear-gradient(
+        var(--shimmer-angle, 135deg),
+        transparent 30%,
+        color-mix(in srgb, white 80%, transparent) 50%,
+        transparent 70%
+      )
+      animation: shimmer 2s linear
+      animation-iteration-count: 8
+      @media (prefers-reduced-motion: reduce)
+        animation: none
   img
     display: block
+    position: relative
     width: 100%
+    height: auto
+
+  @keyframes shimmer
+    to
+      transform: translate(0%, 0%)
 </style>

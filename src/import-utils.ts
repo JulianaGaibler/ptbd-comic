@@ -41,7 +41,7 @@ export function findThumbnail(
     .readdirSync(comicPath)
     .find((file) => file === 'thumbnail.jpg')
   const thumbnail = Object.entries(allThumbnails).find((p) =>
-    p[0].includes(`${comicID}${path.sep}${thumbnailFile}`),
+    p[0].endsWith(`${path.sep}${comicID}${path.sep}${thumbnailFile}`),
   )
   if (!thumbnail) throw new Error(`Thumbnail not found for comic ${comicID}`)
 
@@ -74,9 +74,8 @@ export function findPanels(
       })
       // next we match the comic panels to the allPanels array to get the correct path
       .map((panel) => {
-        // /${comicID}/${panel}
         const importedPanel = Object.entries(allPanels).find((p) =>
-          p[0].includes(`${comicID}${path.sep}${panel}`),
+          p[0].endsWith(`${path.sep}${comicID}${path.sep}${panel}`),
         )
         if (!importedPanel) {
           throw new Error(`Panel ${panel} not found for comic ${comicID}`)

@@ -13,7 +13,26 @@
 
 html
   height: 100%
+  &:has(dialog[open])
+    scrollbar-gutter: stable
 body
   min-height: 100%
   display: flex
   flex-direction: column
+
+.tilt-prev-arrow
+  transform: rotate(-1.8deg)
+.tilt-about
+  transform: rotate(2.3deg)
+.tilt-archive
+  transform: rotate(-3deg)
+.tilt-facebook
+  transform: rotate(2.1deg)
+.tilt-instagram
+  transform: rotate(-2.5deg)
+.tilt-rss
+  transform: rotate(2.3deg)
+.tilt-menu
+  transform: rotate(1.5deg)
+.tilt-next-arrow
+  transform: rotate(2deg)

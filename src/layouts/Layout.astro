@@ -93,7 +93,7 @@ const fontPreloads = getFontPreloads([
   </head>
   <body class={comicProps ? 'page-comic' : undefined}>
     <a href="#content" class="tint--tinted skip-link">Skip to content</a>
-    <Header />
+    <Header comicProps={comicProps} />
     <main id="content">
       <div class="content">
         <slot />
@@ -113,10 +113,13 @@ const fontPreloads = getFontPreloads([
     position: absolute
     top: tint.$size-8
     left: tint.$size-8
-    padding: tint.$size-12 tint.$size-16
     background: var(--tint-bg)
     transform: translateY(-100%)
+    overflow: hidden
+    height: 0
     &:focus
+      height: auto
+      padding: tint.$size-12 tint.$size-16
       transform: translateY(0)
 
   .content

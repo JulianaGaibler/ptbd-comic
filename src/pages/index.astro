@@ -23,6 +23,6 @@ const comics = await getAllComics(allPosts, allPanels, allThumbnails)
 const props = comics[comics.length - 1].props
 ---
 
-<Layout>
+<Layout comicProps={props}>
   <ComicPage {...props} />
 </Layout>
