@@ -229,23 +229,35 @@ const navLinks: NavLink[] = [
       right: min(0px, calc(100% - var(--right-width)))
 
   .dead-zone
-    // ratio preserves the original 400 : 265 dead-zone-to-header relationship
-    flex: 0 1 calc(var(--header-height) * 400 / 265)
+    flex: 0 1 calc(var(--header-height) * 400 / 300)
     min-width: 0
     display: flex
     justify-content: center
     align-items: center
+    padding-inline: clamp(4px,2vw,48px)
     padding-block-end: tint.$size-16
     position: relative
     .logo
       display: block
-      width: clamp(240px, 40vw, 300px)
+      width: 100%
       max-width: 300px
-      margin-inline: 32px
+      outline: none
+      color: var(--tint-text)
+      transition: color 0.2s ease, transform 0.2s ease
+      &:hover, &:focus
+        transform: scale(1.05) rotate(1deg)
+      &:focus
+        color: var(--tint-text-link)
       :global(svg)
-        color: var(--tint-text)
         width: 100%
         height: auto
+
+  @media (max-width: 440px)
+    .dead-zone
+      padding-inline: 24px
+      margin-inline: auto
+    .bg-side
+      display: none
 
   nav
     display: flex
@@ -336,7 +348,7 @@ const navLinks: NavLink[] = [
         display: list-item
 
   @media (prefers-color-scheme: dark)
-    ul::before
+    .nav-inline::before
       content: ''
       position: absolute
       display: block
@@ -345,4 +357,5 @@ const navLinks: NavLink[] = [
       border-radius: 9999px
       filter: blur(24px)
       pointer-events: none
+      opacity: 0.5
 </style>

@@ -92,7 +92,7 @@ const fontPreloads = getFontPreloads([
     <meta property="article:tag" content="Webcomic" />
   </head>
   <body class={comicProps ? 'page-comic' : undefined}>
-    <a href="#content" class="tint--tinted skip-link">Skip to content</a>
+    <a href="#content" class="skip-link">Skip to content</a>
     <Header comicProps={comicProps} />
     <main id="content">
       <div class="content">
@@ -110,17 +110,21 @@ const fontPreloads = getFontPreloads([
     flex: 1
 
   .skip-link
-    position: absolute
-    top: tint.$size-8
-    left: tint.$size-8
+    position: fixed
+    top: tint.$size-16
+    left: 50%
+    z-index: 1000
     background: var(--tint-bg)
-    transform: translateY(-100%)
-    overflow: hidden
-    height: 0
+    color: var(--tint-text)
+    padding: tint.$size-12 tint.$size-24
+    border-radius: 9999px
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+    translate: -50% calc(-100% - tint.$size-16)
+    transition: translate 200ms ease
+    @include tint.effect-focus
+    text-decoration: none
     &:focus
-      height: auto
-      padding: tint.$size-12 tint.$size-16
-      transform: translateY(0)
+      translate: -50% 0
 
   .content
     max-width: 600px
