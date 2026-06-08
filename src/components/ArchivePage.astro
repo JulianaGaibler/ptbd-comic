@@ -53,26 +53,34 @@ const { year, humanEraYear, items, nextYear, prevYear } = Astro.props
   }
 </ul>
 
-<div class="footer">
-  <ComicButton
-    icon
-    disabled={prevYear === undefined}
-    href={`/archive/${prevYear}`}
-    aria-label={`Previous year: ${prevYear}`}
-  >
-    <Fragment set:html={iconArrowLeft} />
-  </ComicButton>
+<div class:list={['footer', { 'footer-centered': items.length < 4 }]}>
+  {
+    items.length >= 4 && (
+      <ComicButton
+        icon
+        disabled={prevYear === undefined}
+        href={`/archive/${prevYear}`}
+        aria-label={`Previous year: ${prevYear}`}
+      >
+        <Fragment set:html={iconArrowLeft} />
+      </ComicButton>
+    )
+  }
   <p class="tint--type-body-sans">
     {items.length} comic{items.length === 1 ? '' : 's'}
   </p>
-  <ComicButton
-    icon
-    disabled={nextYear === undefined}
-    href={`/archive/${nextYear}`}
-    aria-label={`Next year: ${nextYear}`}
-  >
-    <Fragment set:html={iconArrowRight} />
-  </ComicButton>
+  {
+    items.length >= 4 && (
+      <ComicButton
+        icon
+        disabled={nextYear === undefined}
+        href={`/archive/${nextYear}`}
+        aria-label={`Next year: ${nextYear}`}
+      >
+        <Fragment set:html={iconArrowRight} />
+      </ComicButton>
+    )
+  }
 </div>
 
 <style lang="sass">
@@ -84,6 +92,8 @@ const { year, humanEraYear, items, nextYear, prevYear } = Astro.props
       display: flex
       flex-direction: column
       align-items: center
+  .footer-centered
+    justify-content: center
 
   ul
     list-style: none
