@@ -342,8 +342,8 @@ const navLinks: NavLink[] = [
     // hide About/Archive in popover while they're still visible inline (medium)
     .nav-popover-primary
       display: none
-    // narrow: surface About/Archive in popover too
-    @media (max-width: 640px)
+    // narrow: surface About/Archive in popover too (matches .nav-label-primary breakpoint)
+    @media (max-width: 520px)
       .nav-popover-primary
         display: list-item
 
