@@ -262,9 +262,6 @@ const navLinks: NavLink[] = [
       margin: tint.$size-16
       margin-block-start: 0
       translate: 0 -50%
-    .menu-trigger
-      display: none
-      anchor-name: --menu-anchor
       // visual order: prev, About, menu, Archive, secondary..., next
       // DOM order stays prev → primary → secondary → menu → next
       > .tilt-prev-arrow
@@ -279,6 +276,9 @@ const navLinks: NavLink[] = [
         order: 4
       > .tilt-next-arrow
         order: 5
+    .menu-trigger
+      display: none
+      anchor-name: --menu-anchor
       @media (prefers-color-scheme: dark)
         &::before
           content: ''
@@ -288,15 +288,14 @@ const navLinks: NavLink[] = [
           background: var(--tint-bg)
           border-radius: 9999px
           filter: blur(24px)
-
-  @media (max-width: 850px)
-    nav .nav-label-secondary
-      display: none
-    nav .menu-trigger
-      display: list-item
-  @media (max-width: 520px)
-    nav .nav-label-primary
-      display: none
+    @media (max-width: 850px)
+      .nav-label-secondary
+        display: none
+      .menu-trigger
+        display: list-item
+    @media (max-width: 520px)
+      .nav-label-primary
+        display: none
 
   .nav-popover
     &:popover-open
@@ -340,9 +339,8 @@ const navLinks: NavLink[] = [
     // hide About/Archive in popover while they're still visible inline (medium)
     .nav-popover-primary
       display: none
-
-  // narrow: surface About/Archive in popover too
-  @media (max-width: 640px)
-    .nav-popover .nav-popover-primary
-      display: list-item
+    // narrow: surface About/Archive in popover too
+    @media (max-width: 640px)
+      .nav-popover-primary
+        display: list-item
 </style>
